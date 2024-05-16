@@ -15,6 +15,11 @@ class M2EClassifier(nn.Module):
         self.relu = nn.ReLU()
         self.softmax = nn.Softmax(dim=1)
         self.l2_reg = 0.01  # Regularization strength
+        nn.init.orthogonal_(self.dense1.weight)
+        nn.init.orthogonal_(self.dense2.weight)
+        nn.init.orthogonal_(self.dense3.weight)
+        nn.init.orthogonal_(self.dense4.weight)
+        nn.init.orthogonal_(self.dense5.weight)
 
     def forward(self, x):
         x = self.relu(self.dense1(x))

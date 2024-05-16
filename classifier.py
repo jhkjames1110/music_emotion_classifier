@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 from torch.utils.data import TensorDataset, DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
-
 from model import M2EClassifier
 
 # Using librosa to convert .wav files to data we can feed into an ANN model.
@@ -82,8 +81,8 @@ def train(model, criterion, optimizer, train_loader, val_loader, num_epochs=250)
             loss = criterion(outputs, labels)
             
             # L2 regularization
-            l2_norm = sum(p.pow(2.0).sum() for p in model.parameters())
-            loss = loss + l2_lambda * l2_norm
+            # l2_norm = sum(p.pow(2.0).sum() for p in model.parameters())
+            # loss = loss + l2_lambda * l2_norm
             
             loss.backward()
             optimizer.step()
@@ -109,9 +108,11 @@ def train(model, criterion, optimizer, train_loader, val_loader, num_epochs=250)
             for inputs, labels in val_loader:
                 inputs, labels = inputs.to(device), labels.to(device)
                 outputs = model(inputs)
+                
                 loss = criterion(outputs, labels)
-                l2_norm = sum(p.pow(2.0).sum() for p in model.parameters())
-                loss = loss + l2_lambda * l2_norm
+                
+                # l2_norm = sum(p.pow(2.0).sum() for p in model.parameters())
+                # loss = loss + l2_lambda * l2_norm
                 
                 val_loss += loss.item() * inputs.size(0)
                 _, predicted = torch.max(outputs, 1)
@@ -186,10 +187,10 @@ if __name__=="__main__":
     model.to(device)
 
     # Optimizer and loss function
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.01)
     criterion = nn.CrossEntropyLoss()
     
-    l2_lambda = 0.01 # regularization param
+    # l2_lambda = 0.01 # regularization param
     
     # Initialize TensorBoard writer
     writer = SummaryWriter('runs/my_experiment')
